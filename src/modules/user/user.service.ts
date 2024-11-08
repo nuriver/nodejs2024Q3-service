@@ -15,13 +15,15 @@ export class UserService {
     return this.users.find((user) => user.id === id);
   }
 
-  async addUser(userDto: CreateUserDto): Promise<UserResponseData> {
+  async addUser(userDto: CreateUserDto): Promise<User> {
+    const maskedPassword = '*'.repeat(userDto.password.length);
     const userResponseData = {
       id: uuidv4(),
       login: userDto.login,
       version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      password: maskedPassword,
     };
 
     const user: User = {
@@ -37,6 +39,8 @@ export class UserService {
   async updateUserPassword(userId: string, newPassword: string) {
     const user = await this.getUserById(userId);
     user.password = newPassword;
+    user.updatedAt = Date.now();
+    user.version = user.version + 1;
   }
 
   async deleteUser(userId: string) {

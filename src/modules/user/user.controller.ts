@@ -34,7 +34,12 @@ export class UserController {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return user;
+    const maskedPassword = '*'.repeat(user.password.length);
+
+    return {
+      ...user,
+      password: maskedPassword,
+    };
   }
 
   @Post()
@@ -45,8 +50,8 @@ export class UserController {
 
   @Put(':id')
   async updateUserPassword(
-    @Body() updatePasswordDto: UpdatePasswordDto,
     @Param('id', ParseUUIDPipe) id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
     const user = await this.userService.getUserById(id);
 
