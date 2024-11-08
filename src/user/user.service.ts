@@ -5,16 +5,15 @@ import { User } from './interfaces/user.interface';
 export class UserService {
   private readonly users: User[] = [];
 
-  getAllUsers() {
-    return this.users;
+  async getAllUsers(): Promise<User[]> {
+    return this.users; 
   }
 
-  getUserById(id: string) {
-    const user = this.users.find((user) => user.id === id);
-    return user;
+  async getUserById(id: string): Promise<User | undefined> {
+    return this.users.find((user) => user.id === id);
   }
 
-  addUser(user: User) {
+  async addUser(user: User): Promise<void> {
     this.users.push(user);
   }
 }

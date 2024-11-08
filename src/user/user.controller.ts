@@ -14,12 +14,12 @@ export class UserController {
 
   @Get()
   async getAllUsers(): Promise<User[]> {
-    return this.userService.getAllUsers();
+    return await this.userService.getAllUsers();
   }
 
   @Get(':id')
   async getUserById(@Param('id', ParseUUIDPipe) id: string) {
-    const user = this.userService.getUserById(id);
+    const user = await this.userService.getUserById(id);
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
@@ -27,4 +27,5 @@ export class UserController {
 
     return user;
   }
+
 }
