@@ -33,4 +33,9 @@ export class UserService {
 
     return userResponseData;
   }
+
+  async updateUserPassword(userId: string, newPassword: string) {
+    const user = await this.getUserById(userId);
+    user.password = newPassword;
+  }
 }
