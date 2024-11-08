@@ -1,8 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseUUIDPipe,
@@ -56,5 +59,17 @@ export class UserController {
     }
 
     return { message: 'password was changed' };
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+    const user = await this.userService.getUserById(id);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    await this.userService.deleteUser(id);
   }
 }

@@ -5,7 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
-  private readonly users: User[] = [];
+  private users: User[] = [];
 
   async getAllUsers(): Promise<User[]> {
     return this.users;
@@ -37,5 +37,9 @@ export class UserService {
   async updateUserPassword(userId: string, newPassword: string) {
     const user = await this.getUserById(userId);
     user.password = newPassword;
+  }
+
+  async deleteUser(userId: string) {
+    this.users = this.users.filter((user) => user.id !== userId);
   }
 }
