@@ -1,3 +1,4 @@
+import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import {
   Body,
@@ -31,5 +32,11 @@ export class TrackController {
     }
 
     return track;
+  }
+
+  @Post()
+  async addTrack(@Body() createTrackDto: CreateTrackDto) {
+    const track = await this.trackService.addTrack(createTrackDto);
+    return { message: 'Track added successfully', track: track };
   }
 }
