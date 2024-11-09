@@ -26,9 +26,16 @@ export class TrackService {
     return track;
   }
 
-  async updateTrack(updateTrackDto: CreateTrackDto, id: string) {
+  async updateTrack(
+    updateTrackDto: CreateTrackDto,
+    id: string,
+  ): Promise<Track> {
     const originalTrackToUpdate = await this.getTrackById(id);
     Object.assign(originalTrackToUpdate, updateTrackDto);
     return originalTrackToUpdate;
+  }
+
+  async deleteTrack(id: string): Promise<void> {
+    this.tracks = this.tracks.filter((track) => track.id !== id);
   }
 }

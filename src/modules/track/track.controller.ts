@@ -4,7 +4,6 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   HttpCode,
   NotFoundException,
@@ -56,5 +55,17 @@ export class TrackController {
       id,
     );
     return { message: 'Track updated successfully', track: updatedTrack };
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
+    const trackToDelete = await this.trackService.getTrackById(id);
+
+    if (!trackToDelete) {
+      throw new NotFoundException(`Track with ID ${id} not found`);
+    }
+
+    await this.trackService.deleteTrack(id);
   }
 }
