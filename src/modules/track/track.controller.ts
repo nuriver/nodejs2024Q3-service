@@ -39,4 +39,22 @@ export class TrackController {
     const track = await this.trackService.addTrack(createTrackDto);
     return { message: 'Track added successfully', track: track };
   }
+
+  @Put(':id')
+  async updateTrack(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() createTrackDto: CreateTrackDto,
+  ) {
+    const trackToUpdate = await this.trackService.getTrackById(id);
+
+    if (!trackToUpdate) {
+      throw new NotFoundException(`Track with ID ${id} not found`);
+    }
+
+    const updatedTrack = await this.trackService.updateTrack(
+      createTrackDto,
+      id,
+    );
+    return { message: 'Track updated successfully', track: updatedTrack };
+  }
 }

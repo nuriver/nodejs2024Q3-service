@@ -6,7 +6,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class CreateTrackDto {
+export class UpdateTrackDto {
   @IsNotEmpty({ message: 'name is required' })
   @IsString()
   name: string;

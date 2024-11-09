@@ -25,4 +25,10 @@ export class TrackService {
     this.tracks.push(track);
     return track;
   }
+
+  async updateTrack(updateTrackDto: CreateTrackDto, id: string) {
+    const originalTrackToUpdate = await this.getTrackById(id);
+    Object.assign(originalTrackToUpdate, updateTrackDto);
+    return originalTrackToUpdate;
+  }
 }
