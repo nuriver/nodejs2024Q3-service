@@ -24,4 +24,13 @@ export class ArtistService {
 
     return artist;
   }
+
+  async updateArtist(
+    createArtistDto: CreateArtistDto,
+    id: string,
+  ): Promise<Artist> {
+    const artistToUpdate = await this.getArtistById(id);
+    Object.assign(artistToUpdate, createArtistDto);
+    return artistToUpdate;
+  }
 }

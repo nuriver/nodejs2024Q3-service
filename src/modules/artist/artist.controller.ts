@@ -39,4 +39,22 @@ export class ArtistController {
     const artist = await this.artistService.addArtist(createArtistDto);
     return artist;
   }
+
+  @Put(':id')
+  async updateArtist(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() createArtistDto: CreateArtistDto,
+  ) {
+    const artistToUpdate = await this.artistService.getArtistById(id);
+
+    if (!artistToUpdate) {
+      throw new NotFoundException(`Artist with ID ${id} not found`);
+    }
+
+    const updatedArtist = await this.artistService.updateArtist(
+      createArtistDto,
+      id,
+    );
+    return updatedArtist;
+  }
 }
