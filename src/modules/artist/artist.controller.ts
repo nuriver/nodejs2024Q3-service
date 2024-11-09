@@ -37,6 +37,6 @@ export class ArtistController {
   @Post()
   async addArtist(@Body() createArtistDto: CreateArtistDto) {
     const artist = await this.artistService.addArtist(createArtistDto);
-    return { message: 'Artist added successfully', artist: artist };
+    return artist;
   }
 }
