@@ -12,7 +12,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './interfaces/user.interface';
+import { User, UserResponseData } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 
@@ -44,7 +44,7 @@ export class UserController {
   @Post()
   async addUser(@Body() createUserDto: CreateUserDto) {
     const userResponseData = await this.userService.addUser(createUserDto);
-    return { message: 'User added successfully', user: userResponseData };
+    return userResponseData;
   }
 
   @Put(':id')
@@ -62,7 +62,18 @@ export class UserController {
       throw new ForbiddenException('Incorrect old password');
     }
 
-    return { message: 'password was changed' };
+    const updatedUser: UserResponseData =
+      await this.userService.updateUserPassword(
+        id,
+        updatePasswordDto.newPassword,
+      );
+    return {
+      id: updatedUser.id,
+      version: updatedUser.version,
+      login: updatedUser.login,
+      createdAt: updatedUser.createdAt,
+      updatedAt: updatedUser.updatedAt,
+    };
   }
 
   @Delete(':id')
