@@ -12,6 +12,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
+import { CreateArtistDto } from './dto/create-artist.dto';
 
 @Controller('artist')
 export class ArtistController {
@@ -31,5 +32,11 @@ export class ArtistController {
     }
 
     return artist;
+  }
+
+  @Post()
+  async addArtist(@Body() createArtistDto: CreateArtistDto) {
+    const artist = await this.artistService.addArtist(createArtistDto);
+    return { message: 'Artist added successfully', artist: artist };
   }
 }
