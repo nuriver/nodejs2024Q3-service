@@ -10,6 +10,6 @@ export class TrackService {
   }
 
   async getTrackById(id: string): Promise<Track | undefined> {
-    return this.tracks.find((user) => user.id === id);
+    return this.tracks.find((track) => track.id === id);
   }
 }
