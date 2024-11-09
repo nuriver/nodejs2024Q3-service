@@ -36,7 +36,7 @@ export class TrackController {
   @Post()
   async addTrack(@Body() createTrackDto: CreateTrackDto) {
     const track = await this.trackService.addTrack(createTrackDto);
-    return { message: 'Track added successfully', track: track };
+    return track;
   }
 
   @Put(':id')
@@ -54,7 +54,7 @@ export class TrackController {
       createTrackDto,
       id,
     );
-    return { message: 'Track updated successfully', track: updatedTrack };
+    return updatedTrack;
   }
 
   @Delete(':id')
