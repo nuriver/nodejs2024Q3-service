@@ -39,17 +39,11 @@ export class TrackController {
 
   @Post()
   async addTrack(@Body() createTrackDto: CreateTrackDto) {
-    if (createTrackDto.artistId) {
-      const artist = await this.artistService.getArtistById(
-        createTrackDto.artistId,
-      );
-      if (!artist) {
-        throw new NotFoundException(
-          `Artist with ID ${createTrackDto.artistId} not found`,
-        );
-      }
-    }
+    const artistId = createTrackDto.artistId;
 
+    if (artistId && !(await this.artistService.artistExist(artistId))) {
+      throw new NotFoundException(`Artist with ID ${artistId} not found`);
+    }
     const track = await this.trackService.addTrack(createTrackDto);
     return track;
   }
