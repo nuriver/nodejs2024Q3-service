@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Album } from './interfaces/album.interface';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateAlbumDto } from './dto/create-track.dto';
+import { CreateAlbumDto } from './dto/create-album.dto';
 import { TrackService } from '../track/track.service';
 
 @Injectable()
