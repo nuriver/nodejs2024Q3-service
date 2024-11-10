@@ -60,7 +60,7 @@ export class ArtistController {
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteArtist(@Param('id', ParseUUIDPipe) id: string) {
     const artistToDelete = await this.artistService.getArtistById(id);
 
     if (!artistToDelete) {

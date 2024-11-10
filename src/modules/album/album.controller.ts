@@ -72,4 +72,16 @@ export class AlbumController {
     );
     return updatedTrack;
   }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    const albumToDelete = await this.albumService.getAlbumById(id);
+
+    if (!albumToDelete) {
+      throw new NotFoundException(`Album with ID ${id} not found`);
+    }
+
+    await this.albumService.deleteAlbum(id);
+  }
 }
