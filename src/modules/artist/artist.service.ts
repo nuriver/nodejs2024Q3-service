@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class ArtistService {
+  constructor(private trackService: TrackService) {}
+
   private artists: Artist[] = [];
 
   async getAllArtist(): Promise<Artist[]> {
@@ -32,5 +35,14 @@ export class ArtistService {
     const artistToUpdate = await this.getArtistById(id);
     Object.assign(artistToUpdate, createArtistDto);
     return artistToUpdate;
+  }
+
+  async deleteArtist(id: string): Promise<void> {
+    this.artists = this.artists.filter((artist) => artist.id !== id);
+    const trackWithTheArtist = await this.trackService.getTrackByArtistId(id);
+
+    if (trackWithTheArtist) {
+      trackWithTheArtist.artistId = null;
+    }
   }
 }

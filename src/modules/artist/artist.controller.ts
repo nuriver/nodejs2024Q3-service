@@ -57,4 +57,16 @@ export class ArtistController {
     );
     return updatedArtist;
   }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
+    const artistToDelete = await this.artistService.getArtistById(id);
+
+    if (!artistToDelete) {
+      throw new NotFoundException(`Artist with ID ${id} not found`);
+    }
+
+    await this.artistService.deleteArtist(id);
+  }
 }

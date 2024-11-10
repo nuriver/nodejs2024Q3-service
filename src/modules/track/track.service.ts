@@ -15,6 +15,10 @@ export class TrackService {
     return this.tracks.find((track) => track.id === id);
   }
 
+  async getTrackByArtistId(id: string): Promise<Track | undefined> {
+    return this.tracks.find((track) => track.artistId === id);
+  }
+
   async addTrack(trackDto: CreateTrackDto): Promise<Track> {
     const id = uuidv4();
     const track = {

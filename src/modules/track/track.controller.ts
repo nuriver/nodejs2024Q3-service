@@ -1,3 +1,4 @@
+import { ArtistService } from '../artist/artist.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import {
@@ -15,7 +16,10 @@ import {
 
 @Controller('track')
 export class TrackController {
-  constructor(private trackService: TrackService) {}
+  constructor(
+    private trackService: TrackService,
+    private artistService: ArtistService,
+  ) {}
 
   @Get()
   async getAllTracks() {
@@ -35,6 +39,17 @@ export class TrackController {
 
   @Post()
   async addTrack(@Body() createTrackDto: CreateTrackDto) {
+    if (createTrackDto.artistId) {
+      const artist = await this.artistService.getArtistById(
+        createTrackDto.artistId,
+      );
+      if (!artist) {
+        throw new NotFoundException(
+          `Artist with ID ${createTrackDto.artistId} not found`,
+        );
+      }
+    }
+
     const track = await this.trackService.addTrack(createTrackDto);
     return track;
   }
