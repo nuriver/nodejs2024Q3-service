@@ -1,3 +1,4 @@
+import { AlbumService } from '../album/album.service';
 import { ArtistService } from '../artist/artist.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
@@ -19,6 +20,7 @@ export class TrackController {
   constructor(
     private trackService: TrackService,
     private artistService: ArtistService,
+    private albumService: AlbumService,
   ) {}
 
   @Get()
@@ -40,11 +42,18 @@ export class TrackController {
   @Post()
   async addTrack(@Body() createTrackDto: CreateTrackDto) {
     const artistId = createTrackDto.artistId;
+    const albumId = createTrackDto.albumId;
 
     if (artistId && !(await this.artistService.artistExist(artistId))) {
       throw new NotFoundException(`Artist with ID ${artistId} not found`);
     }
+
+    if (albumId && !(await this.albumService.albumExist(albumId))) {
+      throw new NotFoundException(`Album with ID ${albumId} not found`);
+    }
+
     const track = await this.trackService.addTrack(createTrackDto);
+
     return track;
   }
 
@@ -53,6 +62,17 @@ export class TrackController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() createTrackDto: CreateTrackDto,
   ) {
+    const artistId = createTrackDto.artistId;
+    const albumId = createTrackDto.albumId;
+
+    if (artistId && !(await this.artistService.artistExist(artistId))) {
+      throw new NotFoundException(`Artist with ID ${artistId} not found`);
+    }
+
+    if (albumId && !(await this.albumService.albumExist(albumId))) {
+      throw new NotFoundException(`Album with ID ${albumId} not found`);
+    }
+
     const trackToUpdate = await this.trackService.getTrackById(id);
 
     if (!trackToUpdate) {

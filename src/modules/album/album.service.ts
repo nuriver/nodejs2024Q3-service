@@ -33,6 +33,20 @@ export class AlbumService {
     return album;
   }
 
+  async albumExist(id?: string) {
+    if (!id) {
+      return false;
+    }
+
+    const album = await this.getAlbumById(id);
+
+    if (!album) {
+      return false;
+    }
+
+    return true;
+  }
+
   async updateAlbum(albumDto: CreateAlbumDto, id: string): Promise<Album> {
     const albumToUpdate = await this.getAlbumById(id);
     Object.assign(albumToUpdate, albumDto);
