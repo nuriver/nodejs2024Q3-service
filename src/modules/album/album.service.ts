@@ -18,6 +18,10 @@ export class AlbumService {
     return this.albums.find((album) => album.id === id);
   }
 
+  async getAlbumByArtistId(id: string): Promise<Album | undefined> {
+    return this.albums.find((album) => album.artistId === id);
+  }
+
   async addAlbum(albumDto: CreateAlbumDto): Promise<Album> {
     const id = uuidv4();
     const album = {
