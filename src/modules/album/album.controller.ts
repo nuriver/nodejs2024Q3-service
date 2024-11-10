@@ -33,6 +33,8 @@ export class AlbumController {
     if (!album) {
       throw new NotFoundException(`Album with ID ${id} not found`);
     }
+
+    return album;
   }
 
   @Post()
@@ -45,5 +47,29 @@ export class AlbumController {
 
     const album = await this.albumService.addAlbum(createAlbumDto);
     return album;
+  }
+
+  @Put(':id')
+  async updateAlbum(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() createAlbumDto: CreateAlbumDto,
+  ) {
+    const artistId = createAlbumDto.artistId;
+
+    if (artistId && !(await this.artistService.artistExist(artistId))) {
+      throw new NotFoundException(`Artist with ID ${artistId} not found`);
+    }
+
+    const albumToUpdate = await this.albumService.getAlbumById(id);
+
+    if (!albumToUpdate) {
+      throw new NotFoundException(`Album with ID ${id} not found`);
+    }
+
+    const updatedTrack = await this.albumService.updateAlbum(
+      createAlbumDto,
+      id,
+    );
+    return updatedTrack;
   }
 }

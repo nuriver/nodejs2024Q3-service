@@ -25,4 +25,10 @@ export class AlbumService {
     this.albums.push(album);
     return album;
   }
+
+  async updateAlbum(albumDto: CreateAlbumDto, id: string): Promise<Album> {
+    const albumToUpdate = await this.getAlbumById(id);
+    Object.assign(albumToUpdate, albumDto);
+    return albumToUpdate;
+  }
 }
