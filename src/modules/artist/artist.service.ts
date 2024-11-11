@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { TrackService } from '../track/track.service';
 import { AlbumService } from '../album/album.service';
+import { FavsService } from '../favs/favs.service';
 
 @Injectable()
 export class ArtistService {
   constructor(
+    @Inject(forwardRef(() => FavsService)) private favsService: FavsService,
+    @Inject(forwardRef(() => TrackService))
     private trackService: TrackService,
+    @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
   ) {}
 
@@ -67,5 +71,7 @@ export class ArtistService {
     if (albumWithTheArtist) {
       albumWithTheArtist.artistId = null;
     }
+
+    this.favsService.deleteArtistFromFavs(id);
   }
 }

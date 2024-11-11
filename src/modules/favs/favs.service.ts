@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { TrackService } from '../track/track.service';
 import { ArtistService } from '../artist/artist.service';
 import { AlbumService } from '../album/album.service';
-import { TrackEntity } from '../track/entities/track-entity';
-import { AlbumEntity } from '../album/entities/album.entity';
-import { ArtistEntity } from '../artist/entities/artist.entity';
+import { Favorites } from './interfaces/favs.interface';
 
 @Injectable()
 export class FavsService {
   constructor(
+    @Inject(forwardRef(() => TrackService))
     private trackService: TrackService,
+    @Inject(forwardRef(() => ArtistService))
     private artistService: ArtistService,
+    @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
   ) {}
 

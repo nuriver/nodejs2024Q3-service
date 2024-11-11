@@ -1,6 +1,4 @@
 import {
-  Body,
-  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -11,7 +9,6 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Put,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
 import { TrackService } from '../track/track.service';
@@ -106,7 +103,7 @@ export class FavsController {
     await this.favsService.deleteAlbumFromFavs(id);
   }
 
-  @Delete('album/:id')
+  @Delete('artist/:id')
   @HttpCode(204)
   async deleteArtistFromFavs(@Param('id', ParseUUIDPipe) id: string) {
     const artistToDelete = await this.artistService.getArtistById(id);
