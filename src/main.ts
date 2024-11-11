@@ -19,7 +19,7 @@ async function bootstrap() {
   await app.listen(PORT);
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(
-    `Swagger documentation is available at http://localhost:${PORT}/api`,
+    `OpenApi documentation is available at http://localhost:${PORT}/api`,
   );
 }
 bootstrap();
