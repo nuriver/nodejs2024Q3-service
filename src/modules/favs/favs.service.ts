@@ -60,4 +60,16 @@ export class FavsService {
   async addAlbumToFavs(albumId: string): Promise<void> {
     this.favs.albums.push(albumId);
   }
+
+  async deleteTrackFromFavs(id: string): Promise<void> {
+    this.favs.tracks = this.favs.tracks.filter((trackId) => trackId !== id);
+  }
+
+  async deleteAlbumFromFavs(id: string): Promise<void> {
+    this.favs.albums = this.favs.albums.filter((albumId) => albumId !== id);
+  }
+
+  async deleteArtistFromFavs(id: string): Promise<void> {
+    this.favs.artists = this.favs.artists.filter((artistId) => artistId !== id);
+  }
 }

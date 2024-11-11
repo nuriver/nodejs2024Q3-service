@@ -81,4 +81,40 @@ export class FavsController {
 
     return { message: `Album ${album.name} was added to favorites` };
   }
+
+  @Delete('track/:id')
+  @HttpCode(204)
+  async deleteTrackFromFavs(@Param('id', ParseUUIDPipe) id: string) {
+    const trackToDelete = await this.trackService.getTrackById(id);
+
+    if (!trackToDelete) {
+      throw new NotFoundException(`Track with ID ${id} not found`);
+    }
+
+    await this.favsService.deleteTrackFromFavs(id);
+  }
+
+  @Delete('album/:id')
+  @HttpCode(204)
+  async deleteAlbumFromFavs(@Param('id', ParseUUIDPipe) id: string) {
+    const albumToDelete = await this.albumService.getAlbumById(id);
+
+    if (!albumToDelete) {
+      throw new NotFoundException(`Album with ID ${id} not found`);
+    }
+
+    await this.favsService.deleteAlbumFromFavs(id);
+  }
+
+  @Delete('album/:id')
+  @HttpCode(204)
+  async deleteArtistFromFavs(@Param('id', ParseUUIDPipe) id: string) {
+    const artistToDelete = await this.artistService.getArtistById(id);
+
+    if (!artistToDelete) {
+      throw new NotFoundException(`Artist with ID ${id} not found`);
+    }
+
+    await this.favsService.deleteArtistFromFavs(id);
+  }
 }
