@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { TrackService } from '../track/track.service';
 import { AlbumService } from '../album/album.service';
 import { FavsService } from '../favs/favs.service';
+import { Artist } from './interfaces/artist.interface';
 
 @Injectable()
 export class ArtistService {
