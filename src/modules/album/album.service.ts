@@ -1,0 +1,70 @@
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Album } from './interfaces/album.interface';
+import { v4 as uuidv4 } from 'uuid';
+import { CreateAlbumDto } from './dto/create-album.dto';
+import { TrackService } from '../track/track.service';
+import { FavsService } from '../favs/favs.service';
+
+@Injectable()
+export class AlbumService {
+  constructor(
+    @Inject(forwardRef(() => FavsService)) private favsService: FavsService,
+    @Inject(forwardRef(() => TrackService)) private trackService: TrackService,
+  ) {}
+
+  private albums: Album[] = [];
+
+  async getAllAlbums(): Promise<Album[]> {
+    return this.albums;
+  }
+
+  async getAlbumById(id: string): Promise<Album | undefined> {
+    return this.albums.find((album) => album.id === id);
+  }
+
+  async getAlbumByArtistId(id: string): Promise<Album | undefined> {
+    return this.albums.find((album) => album.artistId === id);
+  }
+
+  async addAlbum(albumDto: CreateAlbumDto): Promise<Album> {
+    const id = uuidv4();
+    const album = {
+      id,
+      ...albumDto,
+    };
+
+    this.albums.push(album);
+    return album;
+  }
+
+  async albumExist(id?: string) {
+    if (!id) {
+      return false;
+    }
+
+    const album = await this.getAlbumById(id);
+
+    if (!album) {
+      return false;
+    }
+
+    return true;
+  }
+
+  async updateAlbum(albumDto: CreateAlbumDto, id: string): Promise<Album> {
+    const albumToUpdate = await this.getAlbumById(id);
+    Object.assign(albumToUpdate, albumDto);
+    return albumToUpdate;
+  }
+
+  async deleteAlbum(id: string): Promise<void> {
+    this.albums = this.albums.filter((album) => album.id !== id);
+    const trackWithTheAlbum = await this.trackService.getTrackByAlbumId(id);
+
+    if (trackWithTheAlbum) {
+      trackWithTheAlbum.albumId = null;
+    }
+
+    this.favsService.deleteAlbumFromFavs(id);
+  }
+}
