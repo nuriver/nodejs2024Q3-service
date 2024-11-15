@@ -3,10 +3,8 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import * as YAML from 'yamljs';
-import { config } from 'dotenv';
-config();
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 6000;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
