@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+    container_name: rest-api_c  
+      
+    ports:
+        - ${PORT}:${PORT}
+    volumes:
+      - ./src:/app/src
+      - /app/node_modules
+    command: npm run start:dev
+

@@ -10,7 +10,8 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "nest start --tsc --watch",
+    "start:nodemon": "nodemon --watch src --exec ts-node -r tsconfig-paths/register src/main.ts",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -62,8 +63,8 @@
     "supertest": "^6.2.3",
     "ts-jest": "^27.0.3",
     "ts-loader": "^9.2.3",
-    "ts-node": "^10.0.0",
-    "tsconfig-paths": "^3.10.1",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^3.15.0",
     "typescript": "^4.3.5"
   }
 }
