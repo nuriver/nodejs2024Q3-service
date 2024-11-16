@@ -12,7 +12,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User, UserResponseData } from './interfaces/user.interface';
+import { IUser, UserResponseData } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 
@@ -21,7 +21,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<IUser[]> {
     return await this.userService.getAllUsers();
   }
 

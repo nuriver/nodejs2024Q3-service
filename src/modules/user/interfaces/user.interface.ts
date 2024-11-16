@@ -6,6 +6,6 @@ export interface UserResponseData {
   updatedAt: number;
 }
 
-export interface User extends UserResponseData {
+export interface IUser extends UserResponseData {
   password: string;
 }

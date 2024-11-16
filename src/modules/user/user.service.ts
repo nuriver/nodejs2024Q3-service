@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { User, UserResponseData } from './interfaces/user.interface';
+import { IUser, UserResponseData } from './interfaces/user.interface';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
+import { PrismaService } from '../../prisma.service';
+import { User, Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [];
+  private users: IUser[] = [];
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<IUser[]> {
     return this.users;
   }
 
-  async getUserById(id: string): Promise<User | undefined> {
+  async getUserById(id: string): Promise<IUser | undefined> {
     return this.users.find((user) => user.id === id);
   }
 
@@ -24,7 +26,7 @@ export class UserService {
       updatedAt: Date.now(),
     };
 
-    const user: User = {
+    const user: IUser = {
       ...userResponseData,
       password: userDto.password,
     };
