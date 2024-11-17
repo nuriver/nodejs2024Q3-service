@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { Track } from './interfaces/track.interface';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { FavsService } from '../favs/favs.service';
 import { PrismaService } from '../../prisma.service';
 import { ArtistService } from '../artist/artist.service';

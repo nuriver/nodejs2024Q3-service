@@ -14,6 +14,10 @@ import { FavsService } from './favs.service';
 import { TrackService } from '../track/track.service';
 import { ArtistService } from '../artist/artist.service';
 import { AlbumService } from '../album/album.service';
+import { PrismaService } from 'src/prisma.service';
+import { Artist } from '../artist/interfaces/artist.interface';
+import { Track } from '../track/interfaces/track.interface';
+import { Album } from '../album/interfaces/album.interface';
 
 @Controller('favs')
 export class FavsController {
@@ -22,6 +26,7 @@ export class FavsController {
     private trackService: TrackService,
     private artistService: ArtistService,
     private albumService: AlbumService,
+    private prisma: PrismaService,
   ) {}
 
   @Get()
@@ -33,9 +38,10 @@ export class FavsController {
 
   @Post('artist/:id')
   async addArtistToFavs(@Param('id', ParseUUIDPipe) id: string) {
-    const artist = await this.artistService.getArtistById(id);
-
-    if (!artist) {
+    let artist: Artist;
+    try {
+      artist = await this.artistService.getArtistById(id);
+    } catch {
       throw new HttpException(
         `Artist with ID ${id} not exist`,
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -49,9 +55,10 @@ export class FavsController {
 
   @Post('track/:id')
   async addTrackToFavs(@Param('id', ParseUUIDPipe) id: string) {
-    const track = await this.trackService.getTrackById(id);
-
-    if (!track) {
+    let track: Track;
+    try {
+      track = await this.trackService.getTrackById(id);
+    } catch {
       throw new HttpException(
         `Track with ID ${id} not exist`,
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -65,9 +72,10 @@ export class FavsController {
 
   @Post('album/:id')
   async addAlbumToFavs(@Param('id', ParseUUIDPipe) id: string) {
-    const album = await this.albumService.getAlbumById(id);
-
-    if (!album) {
+    let album: Album;
+    try {
+      album = await this.albumService.getAlbumById(id);
+    } catch {
       throw new HttpException(
         `Album with ID ${id} not exist`,
         HttpStatus.UNPROCESSABLE_ENTITY,

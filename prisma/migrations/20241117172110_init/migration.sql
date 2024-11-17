@@ -42,7 +42,7 @@ CREATE TABLE "Track" (
 
 -- CreateTable
 CREATE TABLE "Favs" (
-    "id" TEXT NOT NULL,
+    "id" INTEGER NOT NULL DEFAULT 1,
     "artists" TEXT[],
     "albums" TEXT[],
     "tracks" TEXT[],

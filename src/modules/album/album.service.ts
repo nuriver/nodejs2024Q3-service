@@ -86,7 +86,14 @@ export class AlbumService {
     const trackWithTheAlbum = await this.trackService.getTrackByAlbumId(id);
 
     if (trackWithTheAlbum) {
-      trackWithTheAlbum.albumId = null;
+      await this.prisma.track.update({
+        where: {
+          id: trackWithTheAlbum.id,
+        },
+        data: {
+          albumId: null,
+        },
+      });
     }
 
     this.favsService.deleteAlbumFromFavs(id);

@@ -4,6 +4,7 @@ import { ArtistService } from '../artist/artist.service';
 import { AlbumService } from '../album/album.service';
 import { Favorites } from './interfaces/favs.interface';
 import { PrismaService } from 'src/prisma.service';
+import { FavoritesResponse } from './interfaces/favsResponse.interface';
 
 @Injectable()
 export class FavsService {
@@ -15,7 +16,9 @@ export class FavsService {
     @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
     @Inject(forwardRef(() => PrismaService)) private prisma: PrismaService,
-  ) {}
+  ) {
+    this.initFavs();
+  }
 
   private favs: Favorites = {
     artists: [],
@@ -23,56 +26,119 @@ export class FavsService {
     tracks: [],
   };
 
-  async getFavs() {
-    let favTracks = await Promise.all(
-      this.favs.tracks.map((trackId) =>
-        this.trackService.getTrackById(trackId),
-      ),
-    );
-    favTracks = favTracks.filter((track) => track !== undefined);
+  private async initFavs() {
+    const existingFavs = await this.prisma.favs.findFirst();
 
-    let favAlbums = await Promise.all(
-      this.favs.albums.map((albumId) =>
-        this.albumService.getAlbumById(albumId),
-      ),
-    );
-    favAlbums = favAlbums.filter((album) => album !== undefined);
+    if (!existingFavs) {
+      await this.prisma.favs.create({
+        data: {
+          albums: [],
+          artists: [],
+          tracks: [],
+        },
+      });
+    }
+  }
 
-    let favArtists = await Promise.all(
-      this.favs.artists.map((artistId) =>
-        this.artistService.getArtistById(artistId),
-      ),
-    );
-    favArtists = favArtists.filter((artist) => artist !== undefined);
+  async getFavs(): Promise<FavoritesResponse> {
+    const favs = await this.prisma.favs.findFirst();
+
+    const [artists, albums, tracks] = await Promise.all([
+      favs.artists && favs.artists.length > 0
+        ? this.prisma.artist.findMany({
+            where: { id: { in: favs.artists } },
+          })
+        : [],
+      favs.albums && favs.albums.length > 0
+        ? this.prisma.album.findMany({
+            where: { id: { in: favs.albums } },
+          })
+        : [],
+      favs.tracks && favs.tracks.length > 0
+        ? this.prisma.track.findMany({
+            where: { id: { in: favs.tracks } },
+          })
+        : [],
+    ]);
 
     return {
-      tracks: favTracks,
-      albums: favAlbums,
-      artists: favArtists,
+      artists,
+      albums,
+      tracks,
     };
   }
 
   async addTrackToFavs(trackId: string): Promise<void> {
-    this.favs.tracks.push(trackId);
+    const favs = await this.prisma.favs.findFirst();
+    await this.prisma.favs.update({
+      where: { id: favs.id },
+      data: {
+        tracks: {
+          push: trackId,
+        },
+      },
+    });
   }
 
   async addArtistToFavs(artistId: string): Promise<void> {
-    this.favs.artists.push(artistId);
+    const favs = await this.prisma.favs.findFirst();
+    await this.prisma.favs.update({
+      where: { id: favs.id },
+      data: {
+        artists: {
+          push: artistId,
+        },
+      },
+    });
   }
 
   async addAlbumToFavs(albumId: string): Promise<void> {
-    this.favs.albums.push(albumId);
+    const favs = await this.prisma.favs.findFirst();
+    await this.prisma.favs.update({
+      where: { id: favs.id },
+      data: {
+        albums: {
+          push: albumId,
+        },
+      },
+    });
   }
 
   async deleteTrackFromFavs(id: string): Promise<void> {
-    this.favs.tracks = this.favs.tracks.filter((trackId) => trackId !== id);
+    const favs = await this.prisma.favs.findFirst();
+    const updatedFavTracks = favs.tracks.filter((trackId) => trackId !== id);
+
+    await this.prisma.favs.update({
+      where: { id: favs.id },
+      data: {
+        tracks: updatedFavTracks,
+      },
+    });
   }
 
   async deleteAlbumFromFavs(id: string): Promise<void> {
-    this.favs.albums = this.favs.albums.filter((albumId) => albumId !== id);
+    const favs = await this.prisma.favs.findFirst();
+    const updatedFavAlbums = favs.albums.filter((albumId) => albumId !== id);
+
+    await this.prisma.favs.update({
+      where: { id: favs.id },
+      data: {
+        albums: updatedFavAlbums,
+      },
+    });
   }
 
   async deleteArtistFromFavs(id: string): Promise<void> {
-    this.favs.artists = this.favs.artists.filter((artistId) => artistId !== id);
+    const favs = await this.prisma.favs.findFirst();
+    const updatedFavArtists = favs.artists.filter(
+      (artistId) => artistId !== id,
+    );
+
+    await this.prisma.favs.update({
+      where: { id: favs.id },
+      data: {
+        artists: updatedFavArtists,
+      },
+    });
   }
 }

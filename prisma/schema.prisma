@@ -38,7 +38,7 @@ model Track {
 }
 
 model Favs {
-  id String @id @default(uuid())
+  id Int @id @default(1)
   artists String[]
   albums String[]
   tracks String[]
