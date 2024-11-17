@@ -47,20 +47,6 @@ export class ArtistService {
     });
   }
 
-  async artistExist(id?: string) {
-    if (!id) {
-      return false;
-    }
-
-    const artist = await this.getArtistById(id);
-
-    if (!artist) {
-      return false;
-    }
-
-    return true;
-  }
-
   async updateArtist(
     createArtistDto: CreateArtistDto,
     id: string,
