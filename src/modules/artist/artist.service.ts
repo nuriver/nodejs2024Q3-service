@@ -1,10 +1,15 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { TrackService } from '../track/track.service';
 import { AlbumService } from '../album/album.service';
 import { FavsService } from '../favs/favs.service';
 import { Artist } from './interfaces/artist.interface';
+import { PrismaService } from '../../prisma.service';
 
 @Injectable()
 export class ArtistService {
@@ -14,27 +19,31 @@ export class ArtistService {
     private trackService: TrackService,
     @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
+    private prisma: PrismaService,
   ) {}
 
-  private artists: Artist[] = [];
-
   async getAllArtist(): Promise<Artist[]> {
-    return this.artists;
+    return this.prisma.artist.findMany();
   }
 
   async getArtistById(id: string): Promise<Artist | undefined> {
-    return this.artists.find((artist) => artist.id === id);
+    const artist = await this.prisma.artist.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!artist) {
+      throw new NotFoundException(`Artist with ID ${id} not found`);
+    }
+
+    return artist;
   }
 
   async addArtist(artistDto: CreateArtistDto): Promise<Artist> {
-    const id = uuidv4();
-    const artist = {
-      id,
-      ...artistDto,
-    };
-    this.artists.push(artist);
-
-    return artist;
+    return await this.prisma.artist.create({
+      data: artistDto,
+    });
   }
 
   async artistExist(id?: string) {
@@ -55,24 +64,52 @@ export class ArtistService {
     createArtistDto: CreateArtistDto,
     id: string,
   ): Promise<Artist> {
-    const artistToUpdate = await this.getArtistById(id);
-    Object.assign(artistToUpdate, createArtistDto);
-    return artistToUpdate;
+    return await this.prisma.artist.update({
+      where: {
+        id: id,
+      },
+      data: {
+        ...createArtistDto,
+      },
+    });
   }
 
   async deleteArtist(id: string): Promise<void> {
-    this.artists = this.artists.filter((artist) => artist.id !== id);
+    await this.prisma.artist.delete({
+      where: {
+        id,
+      },
+    });
+
     const trackWithTheArtist = await this.trackService.getTrackByArtistId(id);
     const albumWithTheArtist = await this.albumService.getAlbumByArtistId(id);
 
     if (trackWithTheArtist) {
-      trackWithTheArtist.artistId = null;
+      await this.prisma.track.update({
+        where: {
+          id: trackWithTheArtist.id,
+        },
+        data: {
+          artistId: null,
+        },
+      });
     }
 
     if (albumWithTheArtist) {
-      albumWithTheArtist.artistId = null;
+      await this.prisma.album.update({
+        where: {
+          id: albumWithTheArtist.id,
+        },
+        data: {
+          artistId: null,
+        },
+      });
     }
 
     this.favsService.deleteArtistFromFavs(id);
+  }
+
+  async deleteAllArtists(): Promise<void> {
+    await this.prisma.artist.deleteMany({});
   }
 }

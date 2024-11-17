@@ -24,13 +24,7 @@ export class ArtistController {
 
   @Get(':id')
   async getArtistById(@Param('id', ParseUUIDPipe) id: string) {
-    const artist = await this.artistService.getArtistById(id);
-
-    if (!artist) {
-      throw new NotFoundException(`Artist with ID ${id} not found`);
-    }
-
-    return artist;
+    return await this.artistService.getArtistById(id);
   }
 
   @Post()
@@ -50,11 +44,7 @@ export class ArtistController {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
 
-    const updatedArtist = await this.artistService.updateArtist(
-      createArtistDto,
-      id,
-    );
-    return updatedArtist;
+    return await this.artistService.updateArtist(createArtistDto, id);
   }
 
   @Delete(':id')
@@ -67,5 +57,10 @@ export class ArtistController {
     }
 
     await this.artistService.deleteArtist(id);
+  }
+
+  @Delete('deleteAll')
+  async deleteAllUsers(): Promise<void> {
+    await this.artistService.deleteAllArtists();
   }
 }

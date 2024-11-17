@@ -9,6 +9,7 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { TrackService } from '../track/track.service';
 import { FavsService } from '../favs/favs.service';
 import { PrismaService } from '../../prisma.service';
+import { ArtistService } from '../artist/artist.service';
 
 @Injectable()
 export class AlbumService {
@@ -16,9 +17,9 @@ export class AlbumService {
     private prisma: PrismaService,
     @Inject(forwardRef(() => FavsService)) private favsService: FavsService,
     @Inject(forwardRef(() => TrackService)) private trackService: TrackService,
+    @Inject(forwardRef(() => ArtistService))
+    private artistService: ArtistService,
   ) {}
-
-  private albums: Album[] = [];
 
   async getAllAlbums(): Promise<Album[]> {
     return this.prisma.album.findMany();
@@ -50,15 +51,7 @@ export class AlbumService {
     const artistId = albumDto.artistId;
 
     if (artistId) {
-      const artist = this.prisma.artist.findUnique({
-        where: {
-          id: artistId,
-        },
-      });
-
-      if (!artist) {
-        throw new NotFoundException(`Artist with ID ${artistId} not found`);
-      }
+      await this.artistService.getArtistById(artistId);
     }
 
     return await this.prisma.album.create({
@@ -84,15 +77,7 @@ export class AlbumService {
     const artistId = albumDto.artistId;
 
     if (artistId) {
-      const artist = this.prisma.artist.findUnique({
-        where: {
-          id: artistId,
-        },
-      });
-
-      if (!artist) {
-        throw new NotFoundException(`Artist with ID ${artistId} not found`);
-      }
+      await this.artistService.getArtistById(artistId);
     }
 
     return await this.prisma.album.update({
