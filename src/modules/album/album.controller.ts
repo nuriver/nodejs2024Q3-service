@@ -71,7 +71,7 @@ export class AlbumController {
   }
 
   @Delete('deleteAll')
-  async deleteAllUsers(): Promise<void> {
+  async deleteAllAlbums(): Promise<void> {
     await this.albumService.deleteAllAlbums();
   }
 }

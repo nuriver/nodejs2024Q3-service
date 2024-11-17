@@ -14,11 +14,11 @@ import { ArtistService } from '../artist/artist.service';
 @Injectable()
 export class AlbumService {
   constructor(
-    private prisma: PrismaService,
     @Inject(forwardRef(() => FavsService)) private favsService: FavsService,
     @Inject(forwardRef(() => TrackService)) private trackService: TrackService,
     @Inject(forwardRef(() => ArtistService))
     private artistService: ArtistService,
+    @Inject(forwardRef(() => PrismaService)) private prisma: PrismaService,
   ) {}
 
   async getAllAlbums(): Promise<Album[]> {

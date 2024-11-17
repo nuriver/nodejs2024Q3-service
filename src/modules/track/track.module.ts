@@ -5,7 +5,7 @@ import { ArtistModule } from '../artist/artist.module';
 import { AlbumModule } from '../album/album.module';
 import { TrackEntity } from './entities/track-entity';
 import { FavsModule } from '../favs/favs.module';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaModule } from 'src/prisma.module';
 
 @Module({
   controllers: [TrackController],
@@ -15,7 +15,7 @@ import { PrismaService } from 'src/prisma.service';
     forwardRef(() => ArtistModule),
     forwardRef(() => AlbumModule),
     forwardRef(() => FavsModule),
-    PrismaService,
+    forwardRef(() => PrismaModule),
   ],
 })
 export class TrackModule {}

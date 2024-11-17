@@ -19,6 +19,7 @@ export class ArtistService {
     private trackService: TrackService,
     @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
+    @Inject(forwardRef(() => PrismaService))
     private prisma: PrismaService,
   ) {}
 

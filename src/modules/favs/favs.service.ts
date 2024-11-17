@@ -3,6 +3,7 @@ import { TrackService } from '../track/track.service';
 import { ArtistService } from '../artist/artist.service';
 import { AlbumService } from '../album/album.service';
 import { Favorites } from './interfaces/favs.interface';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class FavsService {
@@ -13,6 +14,7 @@ export class FavsService {
     private artistService: ArtistService,
     @Inject(forwardRef(() => AlbumService))
     private albumService: AlbumService,
+    @Inject(forwardRef(() => PrismaService)) private prisma: PrismaService,
   ) {}
 
   private favs: Favorites = {

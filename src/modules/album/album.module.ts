@@ -14,7 +14,7 @@ import { PrismaModule } from 'src/prisma.module';
     forwardRef(() => ArtistModule),
     forwardRef(() => TrackModule),
     forwardRef(() => FavsModule),
-    PrismaModule,
+    forwardRef(() => PrismaModule),
   ],
   exports: [AlbumService, AlbumEntity],
 })

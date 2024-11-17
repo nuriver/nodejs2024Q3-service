@@ -60,7 +60,7 @@ export class ArtistController {
   }
 
   @Delete('deleteAll')
-  async deleteAllUsers(): Promise<void> {
+  async deleteAllArtists(): Promise<void> {
     await this.artistService.deleteAllArtists();
   }
 }

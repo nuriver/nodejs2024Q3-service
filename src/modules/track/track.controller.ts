@@ -30,31 +30,12 @@ export class TrackController {
 
   @Get(':id')
   async getTrackById(@Param('id', ParseUUIDPipe) id: string) {
-    const track = await this.trackService.getTrackById(id);
-
-    if (!track) {
-      throw new NotFoundException(`Track with ID ${id} not found`);
-    }
-
-    return track;
+    return await this.trackService.getTrackById(id);
   }
 
   @Post()
   async addTrack(@Body() createTrackDto: CreateTrackDto) {
-    const artistId = createTrackDto.artistId;
-    const albumId = createTrackDto.albumId;
-
-    if (artistId && !(await this.artistService.artistExist(artistId))) {
-      throw new NotFoundException(`Artist with ID ${artistId} not found`);
-    }
-
-    if (albumId && !(await this.albumService.albumExist(albumId))) {
-      throw new NotFoundException(`Album with ID ${albumId} not found`);
-    }
-
-    const track = await this.trackService.addTrack(createTrackDto);
-
-    return track;
+    return await this.trackService.addTrack(createTrackDto);
   }
 
   @Put(':id')
@@ -62,28 +43,13 @@ export class TrackController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() createTrackDto: CreateTrackDto,
   ) {
-    const artistId = createTrackDto.artistId;
-    const albumId = createTrackDto.albumId;
-
-    if (artistId && !(await this.artistService.artistExist(artistId))) {
-      throw new NotFoundException(`Artist with ID ${artistId} not found`);
-    }
-
-    if (albumId && !(await this.albumService.albumExist(albumId))) {
-      throw new NotFoundException(`Album with ID ${albumId} not found`);
-    }
-
     const trackToUpdate = await this.trackService.getTrackById(id);
 
     if (!trackToUpdate) {
       throw new NotFoundException(`Track with ID ${id} not found`);
     }
 
-    const updatedTrack = await this.trackService.updateTrack(
-      createTrackDto,
-      id,
-    );
-    return updatedTrack;
+    return await this.trackService.updateTrack(createTrackDto, id);
   }
 
   @Delete(':id')
@@ -96,5 +62,10 @@ export class TrackController {
     }
 
     await this.trackService.deleteTrack(id);
+  }
+
+  @Delete('deleteAll')
+  async deleteAllTracks(): Promise<void> {
+    await this.trackService.deleteAllTracks();
   }
 }
