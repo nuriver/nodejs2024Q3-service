@@ -25,11 +25,6 @@ export class UserController {
     return await this.userService.getAllUsers();
   }
 
-  @Delete('deleteAll')
-  async deleteAllUsers(): Promise<void> {
-    await this.userService.deleteAllUsers();
-  }
-
   @Get(':id')
   async getUserById(@Param('id', ParseUUIDPipe) id: string): Promise<IUser> {
     const user = await this.userService.getUserById(id);
@@ -74,5 +69,10 @@ export class UserController {
     }
 
     await this.userService.deleteUser(id);
+  }
+
+  @Delete('deleteAll')
+  async deleteAllUsers(): Promise<void> {
+    await this.userService.deleteAllUsers();
   }
 }

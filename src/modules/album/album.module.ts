@@ -5,6 +5,7 @@ import { ArtistModule } from '../artist/artist.module';
 import { TrackModule } from '../track/track.module';
 import { AlbumEntity } from './entities/album.entity';
 import { FavsModule } from '../favs/favs.module';
+import { PrismaModule } from 'src/prisma.module';
 
 @Module({
   providers: [AlbumService, AlbumEntity],
@@ -13,6 +14,7 @@ import { FavsModule } from '../favs/favs.module';
     forwardRef(() => ArtistModule),
     forwardRef(() => TrackModule),
     forwardRef(() => FavsModule),
+    PrismaModule,
   ],
   exports: [AlbumService, AlbumEntity],
 })

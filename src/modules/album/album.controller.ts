@@ -30,23 +30,12 @@ export class AlbumController {
   async getAlbumById(@Param('id', ParseUUIDPipe) id: string) {
     const album = await this.albumService.getAlbumById(id);
 
-    if (!album) {
-      throw new NotFoundException(`Album with ID ${id} not found`);
-    }
-
     return album;
   }
 
   @Post()
   async addAlbum(@Body() createAlbumDto: CreateAlbumDto) {
-    const artistId = createAlbumDto.artistId;
-
-    if (artistId && !(await this.artistService.artistExist(artistId))) {
-      throw new NotFoundException(`Artist with ID ${artistId} not found`);
-    }
-
-    const album = await this.albumService.addAlbum(createAlbumDto);
-    return album;
+    return await this.albumService.addAlbum(createAlbumDto);
   }
 
   @Put(':id')
@@ -66,11 +55,7 @@ export class AlbumController {
       throw new NotFoundException(`Album with ID ${id} not found`);
     }
 
-    const updatedTrack = await this.albumService.updateAlbum(
-      createAlbumDto,
-      id,
-    );
-    return updatedTrack;
+    return await this.albumService.updateAlbum(createAlbumDto, id);
   }
 
   @Delete(':id')
@@ -83,5 +68,10 @@ export class AlbumController {
     }
 
     await this.albumService.deleteAlbum(id);
+  }
+
+  @Delete('deleteAll')
+  async deleteAllUsers(): Promise<void> {
+    await this.albumService.deleteAllAlbums();
   }
 }

@@ -6,14 +6,11 @@ import {
 import { IUser } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../../prisma.service';
-import { User, Prisma } from '@prisma/client';
 import convertTimestamps from 'src/utilities/convertTimeStamps';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
-
-  private users: IUser[] = [];
 
   async getAllUsers(): Promise<IUser[]> {
     const users = await this.prisma.user.findMany();
@@ -86,7 +83,7 @@ export class UserService {
     });
   }
 
-  async deleteAllUsers() {
-    return await this.prisma.user.deleteMany({});
+  async deleteAllUsers(): Promise<void> {
+    await this.prisma.user.deleteMany({});
   }
 }
