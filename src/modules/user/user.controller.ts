@@ -12,7 +12,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { IUser, UserResponseData } from './interfaces/user.interface';
+import { IUser } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 
@@ -25,24 +25,20 @@ export class UserController {
     return await this.userService.getAllUsers();
   }
 
+  @Delete('deleteAll')
+  async deleteAllUsers(): Promise<void> {
+    await this.userService.deleteAllUsers();
+  }
+
   @Get(':id')
-  async getUserById(@Param('id', ParseUUIDPipe) id: string) {
+  async getUserById(@Param('id', ParseUUIDPipe) id: string): Promise<IUser> {
     const user = await this.userService.getUserById(id);
 
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
-
-    const maskedPassword = '*'.repeat(user.password.length);
-
-    return {
-      ...user,
-      password: maskedPassword,
-    };
+    return user;
   }
 
   @Post()
-  async addUser(@Body() createUserDto: CreateUserDto) {
+  async addUser(@Body() createUserDto: CreateUserDto): Promise<IUser> {
     const userResponseData = await this.userService.addUser(createUserDto);
     return userResponseData;
   }
@@ -62,18 +58,10 @@ export class UserController {
       throw new ForbiddenException('Incorrect old password');
     }
 
-    const updatedUser: UserResponseData =
-      await this.userService.updateUserPassword(
-        id,
-        updatePasswordDto.newPassword,
-      );
-    return {
-      id: updatedUser.id,
-      version: updatedUser.version,
-      login: updatedUser.login,
-      createdAt: updatedUser.createdAt,
-      updatedAt: updatedUser.updatedAt,
-    };
+    return await this.userService.updateUserPassword(
+      id,
+      updatePasswordDto.newPassword,
+    );
   }
 
   @Delete(':id')

@@ -1,11 +1,8 @@
-export interface UserResponseData {
+export interface IUser {
   id: string;
   login: string;
   version: number;
   createdAt: number;
   updatedAt: number;
-}
-
-export interface IUser extends UserResponseData {
-  password: string;
+  password?: string;
 }

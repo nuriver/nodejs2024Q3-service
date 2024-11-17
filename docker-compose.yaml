@@ -17,7 +17,8 @@ services:
       - postgres 
     networks:
       - custom_network
-    entrypoint: /bin/sh -c "npx prisma migrate deploy && npm run start:dev"
+    entrypoint: /bin/sh -c "npx prisma generate && npx prisma migrate deploy && npm run start:dev"
+    restart: on-failure
       
   postgres:
     image: postgres:latest 
@@ -32,6 +33,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - custom_network 
+    restart: on-failure
       
 volumes:
   postgres_data:
