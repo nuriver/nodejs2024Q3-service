@@ -22,8 +22,6 @@ export class TrackService {
     @Inject(forwardRef(() => PrismaService)) private prisma: PrismaService,
   ) {}
 
-  private tracks: Track[] = [];
-
   async getAllTracks(): Promise<Track[]> {
     return this.prisma.track.findMany();
   }

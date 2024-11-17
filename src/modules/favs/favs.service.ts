@@ -20,12 +20,6 @@ export class FavsService {
     this.initFavs();
   }
 
-  private favs: Favorites = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
-
   private async initFavs() {
     const existingFavs = await this.prisma.favs.findFirst();
 
