@@ -15,10 +15,6 @@ import { PrismaService } from '../../prisma.service';
 export class ArtistService {
   constructor(
     @Inject(forwardRef(() => FavsService)) private favsService: FavsService,
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
-    @Inject(forwardRef(() => AlbumService))
-    private albumService: AlbumService,
     @Inject(forwardRef(() => PrismaService))
     private prisma: PrismaService,
   ) {}
@@ -67,31 +63,6 @@ export class ArtistService {
         id,
       },
     });
-
-    const trackWithTheArtist = await this.trackService.getTrackByArtistId(id);
-    const albumWithTheArtist = await this.albumService.getAlbumByArtistId(id);
-
-    if (trackWithTheArtist) {
-      await this.prisma.track.update({
-        where: {
-          id: trackWithTheArtist.id,
-        },
-        data: {
-          artistId: null,
-        },
-      });
-    }
-
-    if (albumWithTheArtist) {
-      await this.prisma.album.update({
-        where: {
-          id: albumWithTheArtist.id,
-        },
-        data: {
-          artistId: null,
-        },
-      });
-    }
 
     this.favsService.deleteArtistFromFavs(id);
   }

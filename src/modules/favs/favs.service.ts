@@ -9,12 +9,6 @@ import { FavoritesResponse } from './interfaces/favsResponse.interface';
 @Injectable()
 export class FavsService {
   constructor(
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
-    @Inject(forwardRef(() => ArtistService))
-    private artistService: ArtistService,
-    @Inject(forwardRef(() => AlbumService))
-    private albumService: AlbumService,
     @Inject(forwardRef(() => PrismaService)) private prisma: PrismaService,
   ) {
     this.initFavs();

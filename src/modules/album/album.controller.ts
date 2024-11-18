@@ -12,14 +12,10 @@ import {
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
-import { ArtistService } from '../artist/artist.service';
 
 @Controller('album')
 export class AlbumController {
-  constructor(
-    private albumService: AlbumService,
-    private artistService: ArtistService,
-  ) {}
+  constructor(private albumService: AlbumService) {}
 
   @Get()
   async getAllAlbums() {

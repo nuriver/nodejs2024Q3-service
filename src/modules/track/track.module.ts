@@ -3,14 +3,13 @@ import { TrackController } from './track.controller';
 import { TrackService } from './track.service';
 import { ArtistModule } from '../artist/artist.module';
 import { AlbumModule } from '../album/album.module';
-import { TrackEntity } from './entities/track-entity';
 import { FavsModule } from '../favs/favs.module';
 import { PrismaModule } from 'src/prisma.module';
 
 @Module({
   controllers: [TrackController],
-  providers: [TrackService, TrackEntity],
-  exports: [TrackService, TrackEntity],
+  providers: [TrackService],
+  exports: [TrackService],
   imports: [
     forwardRef(() => ArtistModule),
     forwardRef(() => AlbumModule),

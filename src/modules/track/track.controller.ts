@@ -1,5 +1,3 @@
-import { AlbumService } from '../album/album.service';
-import { ArtistService } from '../artist/artist.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { TrackService } from './track.service';
 import {
@@ -17,11 +15,7 @@ import {
 
 @Controller('track')
 export class TrackController {
-  constructor(
-    private trackService: TrackService,
-    private artistService: ArtistService,
-    private albumService: AlbumService,
-  ) {}
+  constructor(private trackService: TrackService) {}
 
   @Get()
   async getAllTracks() {

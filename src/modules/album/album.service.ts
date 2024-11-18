@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { Album } from './interfaces/album.interface';
 import { CreateAlbumDto } from './dto/create-album.dto';
-import { TrackService } from '../track/track.service';
 import { FavsService } from '../favs/favs.service';
 import { PrismaService } from '../../prisma.service';
 import { ArtistService } from '../artist/artist.service';
@@ -15,7 +14,6 @@ import { ArtistService } from '../artist/artist.service';
 export class AlbumService {
   constructor(
     @Inject(forwardRef(() => FavsService)) private favsService: FavsService,
-    @Inject(forwardRef(() => TrackService)) private trackService: TrackService,
     @Inject(forwardRef(() => ArtistService))
     private artistService: ArtistService,
     @Inject(forwardRef(() => PrismaService)) private prisma: PrismaService,
@@ -82,19 +80,6 @@ export class AlbumService {
         id,
       },
     });
-
-    const trackWithTheAlbum = await this.trackService.getTrackByAlbumId(id);
-
-    if (trackWithTheAlbum) {
-      await this.prisma.track.update({
-        where: {
-          id: trackWithTheAlbum.id,
-        },
-        data: {
-          albumId: null,
-        },
-      });
-    }
 
     this.favsService.deleteAlbumFromFavs(id);
   }

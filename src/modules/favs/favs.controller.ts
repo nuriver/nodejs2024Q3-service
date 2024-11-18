@@ -26,7 +26,6 @@ export class FavsController {
     private trackService: TrackService,
     private artistService: ArtistService,
     private albumService: AlbumService,
-    private prisma: PrismaService,
   ) {}
 
   @Get()
