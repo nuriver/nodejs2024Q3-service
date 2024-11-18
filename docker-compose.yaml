@@ -5,9 +5,8 @@ services:
       context: .
     image: nuriver/rest-api
     container_name: rest-api_c  
-      
     ports:
-        - ${PORT}:${PORT}
+      - ${PORT}:${PORT}
     volumes:
       - ./src:/app/src
       - /app/node_modules
@@ -22,7 +21,9 @@ services:
     restart: on-failure
       
   postgres:
-    image: postgres:latest 
+    build:
+      context: ./db
+    image: nuriver/custom-postgres
     container_name: postgres_c
     environment:
       POSTGRES_USER: ${POSTGRES_USER} 
@@ -32,15 +33,23 @@ services:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - postgres_logs:/var/log/postgresql 
+      - postgres_backups:/backups 
+      - postgres_conf:/etc/postgresql  
     networks:
       - custom_network 
     restart: on-failure
-      
+
 volumes:
   postgres_data:
+    driver: local
+  postgres_logs:
+    driver: local
+  postgres_backups:
+    driver: local
+  postgres_conf:
     driver: local
 
 networks:
   custom_network:
     driver: bridge
-

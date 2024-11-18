@@ -1,8 +1,4 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { TrackService } from '../track/track.service';
-import { ArtistService } from '../artist/artist.service';
-import { AlbumService } from '../album/album.service';
-import { Favorites } from './interfaces/favs.interface';
 import { PrismaService } from 'src/prisma.service';
 import { FavoritesResponse } from './interfaces/favsResponse.interface';
 

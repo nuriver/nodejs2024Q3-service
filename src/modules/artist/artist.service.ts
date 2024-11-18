@@ -5,8 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
-import { TrackService } from '../track/track.service';
-import { AlbumService } from '../album/album.service';
 import { FavsService } from '../favs/favs.service';
 import { Artist } from './interfaces/artist.interface';
 import { PrismaService } from '../../prisma.service';

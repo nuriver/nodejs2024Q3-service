@@ -14,7 +14,6 @@ import { FavsService } from './favs.service';
 import { TrackService } from '../track/track.service';
 import { ArtistService } from '../artist/artist.service';
 import { AlbumService } from '../album/album.service';
-import { PrismaService } from 'src/prisma.service';
 import { Artist } from '../artist/interfaces/artist.interface';
 import { Track } from '../track/interfaces/track.interface';
 import { Album } from '../album/interfaces/album.interface';
