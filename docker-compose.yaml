@@ -3,6 +3,7 @@ services:
   app:
     build:
       context: .
+    image: nuriver/rest-api
     container_name: rest-api_c  
       
     ports:
