@@ -19,13 +19,23 @@ npm install
 
 ## Running application
 
+This command will run the application with a PostgreSQL database integrated with Prisma, and the server inside Docker containers, joined by a custom network:
+
 ```
-npm start
+docker-compose up
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/api/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+## Docker vulnerabilities scanning 
+
+You can scan docker container for vulnerabilities by enter this in terminal (powershell):
+
+```
+npm run docker:scan --image=<docker-image-name>
+```
 
 ## Testing
 
