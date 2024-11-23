@@ -11,29 +11,55 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Req,
+  Res,
 } from '@nestjs/common';
+import { LoggingService } from '../customLogger/customLogger.service';
+import { Request, Response } from 'express';
 
 @Controller('track')
 export class TrackController {
-  constructor(private trackService: TrackService) {}
+  constructor(
+    private loggingService: LoggingService,
+    private trackService: TrackService,
+  ) {}
 
   @Get()
-  async getAllTracks() {
-    return await this.trackService.getAllTracks();
+  async getAllTracks(@Req() req: Request, @Res() res: Response) {
+    const tracks = await this.trackService.getAllTracks();
+
+    res.status(200).json(tracks);
+    this.loggingService.commonLogger(req, res.statusCode, tracks);
   }
 
   @Get(':id')
-  async getTrackById(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.trackService.getTrackById(id);
+  async getTrackById(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    const track = await this.trackService.getTrackById(id);
+
+    res.status(200).json(track);
+    this.loggingService.commonLogger(req, res.statusCode, track);
   }
 
   @Post()
-  async addTrack(@Body() createTrackDto: CreateTrackDto) {
-    return await this.trackService.addTrack(createTrackDto);
+  async addTrack(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() createTrackDto: CreateTrackDto,
+  ) {
+    const track = await this.trackService.addTrack(createTrackDto);
+
+    res.status(201).json(track);
+    this.loggingService.commonLogger(req, res.statusCode, track);
   }
 
   @Put(':id')
   async updateTrack(
+    @Req() req: Request,
+    @Res() res: Response,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() createTrackDto: CreateTrackDto,
   ) {
@@ -43,12 +69,22 @@ export class TrackController {
       throw new NotFoundException(`Track with ID ${id} not found`);
     }
 
-    return await this.trackService.updateTrack(createTrackDto, id);
+    const updatedTrack = await this.trackService.updateTrack(
+      createTrackDto,
+      id,
+    );
+
+    res.status(200).json(updatedTrack);
+    this.loggingService.commonLogger(req, res.statusCode, updatedTrack);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteTrack(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteTrack(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const trackToDelete = await this.trackService.getTrackById(id);
 
     if (!trackToDelete) {
@@ -56,6 +92,9 @@ export class TrackController {
     }
 
     await this.trackService.deleteTrack(id);
+
+    res.status(204).json({});
+    this.loggingService.commonLogger(req, res.statusCode, {});
   }
 
   @Delete('deleteAll')
