@@ -9,32 +9,57 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
+import { LoggingService } from '../customLogger/customLogger.service';
+import { Request, Response } from 'express';
 
 @Controller('artist')
 export class ArtistController {
-  constructor(private artistService: ArtistService) {}
+  constructor(
+    private loggingService: LoggingService,
+    private artistService: ArtistService,
+  ) {}
 
   @Get()
-  async getAllArtist() {
-    return await this.artistService.getAllArtist();
+  async getAllArtist(@Req() req: Request, @Res() res: Response) {
+    const artists = await this.artistService.getAllArtist();
+
+    res.status(200).json(artists);
+    this.loggingService.commonLogger(req, res.statusCode, artists);
   }
 
   @Get(':id')
-  async getArtistById(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.artistService.getArtistById(id);
+  async getArtistById(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    const artist = await this.artistService.getArtistById(id);
+
+    res.status(200).json(artist);
+    this.loggingService.commonLogger(req, res.statusCode, artist);
   }
 
   @Post()
-  async addArtist(@Body() createArtistDto: CreateArtistDto) {
+  async addArtist(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() createArtistDto: CreateArtistDto,
+  ) {
     const artist = await this.artistService.addArtist(createArtistDto);
-    return artist;
+
+    res.status(201).json(artist);
+    this.loggingService.commonLogger(req, res.statusCode, artist);
   }
 
   @Put(':id')
   async updateArtist(
+    @Req() req: Request,
+    @Res() res: Response,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() createArtistDto: CreateArtistDto,
   ) {
@@ -44,12 +69,21 @@ export class ArtistController {
       throw new NotFoundException(`Artist with ID ${id} not found`);
     }
 
-    return await this.artistService.updateArtist(createArtistDto, id);
+    const updatedArtist = await this.artistService.updateArtist(
+      createArtistDto,
+      id,
+    );
+    res.status(200).json(updatedArtist);
+    this.loggingService.commonLogger(req, res.statusCode, updatedArtist);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteArtist(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteArtist(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const artistToDelete = await this.artistService.getArtistById(id);
 
     if (!artistToDelete) {
@@ -57,6 +91,8 @@ export class ArtistController {
     }
 
     await this.artistService.deleteArtist(id);
+    res.status(204).json({});
+    this.loggingService.commonLogger(req, res.statusCode, {});
   }
 
   @Delete('deleteAll')
