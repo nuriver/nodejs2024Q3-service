@@ -27,9 +27,24 @@ export class LoggingService implements LoggerService {
     this.logResponse(statusCode, responseBody);
   }
 
-  fatal(message: any, ...optionalParams: any[]) {}
+  error(errorDetails: any) {
+    console.error('--- Error Occurred ---');
+    console.error(`Message: ${errorDetails.message}`);
+    console.error(`Status Code: ${errorDetails.statusCode}`);
+    console.error(`Timestamp: ${errorDetails.timestamp}`);
+    if (errorDetails.stack) {
+      console.error(`Stack Trace: ${errorDetails.stack}`);
+    }
+    if (errorDetails.reason) {
+      console.error(`Reason: ${errorDetails.reason}`);
+    }
+    if (errorDetails.promise) {
+      console.error(`Promise: ${errorDetails.promise}`);
+    }
+    console.error('------------------------');
+  }
 
-  error(message: any, ...optionalParams: any[]) {}
+  fatal(message: any, ...optionalParams: any[]) {}
 
   warn(message: any, ...optionalParams: any[]) {}
 
