@@ -9,33 +9,57 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
+import { LoggingService } from '../customLogger/customLogger.service';
+import { Request, Response } from 'express';
 
 @Controller('album')
 export class AlbumController {
-  constructor(private albumService: AlbumService) {}
+  constructor(
+    private loggingService: LoggingService,
+    private albumService: AlbumService,
+  ) {}
 
   @Get()
-  async getAllAlbums() {
-    return await this.albumService.getAllAlbums();
+  async getAllAlbums(@Req() req: Request, @Res() res: Response) {
+    const albums = await this.albumService.getAllAlbums();
+
+    res.status(200).json(albums);
+    this.loggingService.commonLogger(req, res.statusCode, albums);
   }
 
   @Get(':id')
-  async getAlbumById(@Param('id', ParseUUIDPipe) id: string) {
+  async getAlbumById(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const album = await this.albumService.getAlbumById(id);
 
-    return album;
+    res.status(200).json(album);
+    this.loggingService.commonLogger(req, res.statusCode, album);
   }
 
   @Post()
-  async addAlbum(@Body() createAlbumDto: CreateAlbumDto) {
-    return await this.albumService.addAlbum(createAlbumDto);
+  async addAlbum(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() createAlbumDto: CreateAlbumDto,
+  ) {
+    const album = await this.albumService.addAlbum(createAlbumDto);
+
+    res.status(201).json(album);
+    this.loggingService.commonLogger(req, res.statusCode, album);
   }
 
   @Put(':id')
   async updateAlbum(
+    @Req() req: Request,
+    @Res() res: Response,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() createAlbumDto: CreateAlbumDto,
   ) {
@@ -45,12 +69,22 @@ export class AlbumController {
       throw new NotFoundException(`Album with ID ${id} not found`);
     }
 
-    return await this.albumService.updateAlbum(createAlbumDto, id);
+    const updatedAlbum = await this.albumService.updateAlbum(
+      createAlbumDto,
+      id,
+    );
+
+    res.status(200).json(updatedAlbum);
+    this.loggingService.commonLogger(req, res.statusCode, updatedAlbum);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  async deleteAlbum(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteAlbum(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const albumToDelete = await this.albumService.getAlbumById(id);
 
     if (!albumToDelete) {
@@ -58,6 +92,8 @@ export class AlbumController {
     }
 
     await this.albumService.deleteAlbum(id);
+    res.status(204).json({});
+    this.loggingService.commonLogger(req, res.statusCode, {});
   }
 
   @Delete('deleteAll')

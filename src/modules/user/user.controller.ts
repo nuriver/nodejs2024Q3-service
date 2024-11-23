@@ -14,7 +14,6 @@ import {
   Res,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { IUser } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { LoggingService } from '../customLogger/customLogger.service';
