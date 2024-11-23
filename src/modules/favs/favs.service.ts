@@ -125,4 +125,12 @@ export class FavsService {
       },
     });
   }
+
+  async deleteAllFavs(): Promise<void> {
+    const favs = await this.prisma.favs.findFirst();
+    await this.prisma.favs.update({
+      where: { id: favs.id },
+      data: { artists: [], albums: [], tracks: [] },
+    });
+  }
 }

@@ -9,6 +9,8 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
 import { TrackService } from '../track/track.service';
@@ -17,10 +19,13 @@ import { AlbumService } from '../album/album.service';
 import { Artist } from '../artist/interfaces/artist.interface';
 import { Track } from '../track/interfaces/track.interface';
 import { Album } from '../album/interfaces/album.interface';
+import { LoggingService } from '../customLogger/customLogger.service';
+import { Request, Response } from 'express';
 
 @Controller('favs')
 export class FavsController {
   constructor(
+    private loggingService: LoggingService,
     private favsService: FavsService,
     private trackService: TrackService,
     private artistService: ArtistService,
@@ -28,14 +33,19 @@ export class FavsController {
   ) {}
 
   @Get()
-  async getFavs() {
+  async getFavs(@Req() req: Request, @Res() res: Response) {
     const favorites = await this.favsService.getFavs();
 
-    return favorites;
+    res.status(200).json(favorites);
+    this.loggingService.commonLogger(req, res.statusCode, favorites);
   }
 
   @Post('artist/:id')
-  async addArtistToFavs(@Param('id', ParseUUIDPipe) id: string) {
+  async addArtistToFavs(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     let artist: Artist;
     try {
       artist = await this.artistService.getArtistById(id);
@@ -47,12 +57,18 @@ export class FavsController {
     }
 
     await this.favsService.addArtistToFavs(id);
+    const message = `Artist ${artist.name} was added to favorites`;
 
-    return { message: `Artist ${artist.name} was added to favorites` };
+    res.status(201).json({ message });
+    this.loggingService.commonLogger(req, res.statusCode, { message });
   }
 
   @Post('track/:id')
-  async addTrackToFavs(@Param('id', ParseUUIDPipe) id: string) {
+  async addTrackToFavs(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     let track: Track;
     try {
       track = await this.trackService.getTrackById(id);
@@ -65,11 +81,18 @@ export class FavsController {
 
     await this.favsService.addTrackToFavs(id);
 
-    return { message: `Track ${track.name} was added to favorites` };
+    const message = `Track ${track.name} was added to favorites`;
+
+    res.status(201).json({ message });
+    this.loggingService.commonLogger(req, res.statusCode, { message });
   }
 
   @Post('album/:id')
-  async addAlbumToFavs(@Param('id', ParseUUIDPipe) id: string) {
+  async addAlbumToFavs(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     let album: Album;
     try {
       album = await this.albumService.getAlbumById(id);
@@ -79,15 +102,21 @@ export class FavsController {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
     await this.favsService.addAlbumToFavs(id);
 
-    return { message: `Album ${album.name} was added to favorites` };
+    const message = `Album ${album.name} was added to favorites`;
+
+    res.status(201).json({ message });
+    this.loggingService.commonLogger(req, res.statusCode, { message });
   }
 
   @Delete('track/:id')
   @HttpCode(204)
-  async deleteTrackFromFavs(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteTrackFromFavs(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const trackToDelete = await this.trackService.getTrackById(id);
 
     if (!trackToDelete) {
@@ -95,11 +124,18 @@ export class FavsController {
     }
 
     await this.favsService.deleteTrackFromFavs(id);
+
+    res.status(204).json({});
+    this.loggingService.commonLogger(req, res.statusCode, {});
   }
 
   @Delete('album/:id')
   @HttpCode(204)
-  async deleteAlbumFromFavs(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteAlbumFromFavs(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const albumToDelete = await this.albumService.getAlbumById(id);
 
     if (!albumToDelete) {
@@ -107,11 +143,18 @@ export class FavsController {
     }
 
     await this.favsService.deleteAlbumFromFavs(id);
+
+    res.status(204).json({});
+    this.loggingService.commonLogger(req, res.statusCode, {});
   }
 
   @Delete('artist/:id')
   @HttpCode(204)
-  async deleteArtistFromFavs(@Param('id', ParseUUIDPipe) id: string) {
+  async deleteArtistFromFavs(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
     const artistToDelete = await this.artistService.getArtistById(id);
 
     if (!artistToDelete) {
@@ -119,5 +162,13 @@ export class FavsController {
     }
 
     await this.favsService.deleteArtistFromFavs(id);
+
+    res.status(204).json({});
+    this.loggingService.commonLogger(req, res.statusCode, {});
+  }
+
+  @Delete('all')
+  async deleteAllFavs() {
+    await this.favsService.deleteAllFavs();
   }
 }
