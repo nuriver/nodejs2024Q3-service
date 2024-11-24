@@ -10,11 +10,10 @@ import convertTimestamps from 'src/utilities/convertTimeStamps';
 import bcrypt from 'bcrypt';
 import hashPassword from 'src/utilities/hashPassword';
 
-const CRYPT_SALT = process.env.CRYPT_SALT;
-
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
+  private readonly CRYPT_SALT = process.env.CRYPT_SALT;
 
   async getAllUsers(): Promise<IUser[]> {
     const users = await this.prisma.user.findMany();
@@ -62,7 +61,10 @@ export class UserService {
       );
     }
 
-    const hashedPassword = await hashPassword(userDto.password, +CRYPT_SALT);
+    const hashedPassword = await hashPassword(
+      userDto.password,
+      +this.CRYPT_SALT,
+    );
 
     const newUser = await this.prisma.user.create({
       data: {
@@ -77,7 +79,7 @@ export class UserService {
   }
 
   async updateUserPassword(userId: string, newPassword: string) {
-    const hashPassword = await bcrypt.hash(newPassword, CRYPT_SALT);
+    const hashPassword = await bcrypt.hash(newPassword, +this.CRYPT_SALT);
 
     const updatedUser = await this.prisma.user.update({
       where: {
