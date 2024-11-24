@@ -23,13 +23,16 @@ export class AuthService {
       throw new ForbiddenException(`User with login ${login} is not found`);
     }
 
-    if (user && !correctPassword(user.password, pass)) {
+    const isPasswordCorrect = await correctPassword(pass, user.password);
+
+    if (user && !isPasswordCorrect) {
       throw new ForbiddenException('Wrong password');
     }
 
     const payload = { sub: user.id, username: user.login };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload),
+      user_id: user.id,
     };
   }
 }

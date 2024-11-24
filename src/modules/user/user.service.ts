@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,8 +8,9 @@ import { IUser } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../../prisma.service';
 import convertTimestamps from 'src/utilities/convertTimeStamps';
-import bcrypt from 'bcrypt';
 import hashPassword from 'src/utilities/hashPassword';
+import correctPassword from 'src/utilities/correctPassword';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UserService {
@@ -75,18 +77,39 @@ export class UserService {
 
     const { password, ...userWithoutPassword } = newUser;
 
-    return convertTimestamps(newUser);
+    return convertTimestamps(userWithoutPassword);
   }
 
-  async updateUserPassword(userId: string, newPassword: string) {
-    const hashPassword = await bcrypt.hash(newPassword, +this.CRYPT_SALT);
+  async updateUserPassword(
+    updatePasswordDto: UpdatePasswordDto,
+    userId: string,
+  ) {
+    const userToUpdate = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    const isPasswordCorrect = await correctPassword(
+      updatePasswordDto.oldPassword,
+      userToUpdate.password,
+    );
+
+    if (!isPasswordCorrect) {
+      throw new ForbiddenException('Incorrect old password');
+    }
+
+    const hashedPassword = await hashPassword(
+      updatePasswordDto.newPassword,
+      +this.CRYPT_SALT,
+    );
 
     const updatedUser = await this.prisma.user.update({
       where: {
         id: userId,
       },
       data: {
-        password: hashPassword,
+        password: hashedPassword,
         version: {
           increment: 1,
         },

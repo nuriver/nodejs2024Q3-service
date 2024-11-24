@@ -4,21 +4,41 @@ import { LoggingService } from '../customLogger/customLogger.service';
 import { Request, Response } from 'express';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { Public } from 'src/common/decorators/public.decorator';
+import { UserService } from '../user/user.service';
 
+@Public()
 @Controller('auth')
 export class AuthController {
   constructor(
     private loggingService: LoggingService,
     private authService: AuthService,
+    private userService: UserService,
   ) {}
 
-  @Public()
+  @Post('signup')
+  async signup(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() createUserDto: CreateUserDto,
+  ) {
+    const user = await this.userService.addUser(createUserDto);
+
+    res.status(201).json(user);
+    this.loggingService.commonLogger(req, res.statusCode, user);
+  }
+
   @Post('login')
   async signIn(
     @Req() req: Request,
     @Res() res: Response,
     @Body() createUserDto: CreateUserDto,
   ) {
-    await this.authService.signIn(createUserDto.login, createUserDto.password);
+    const token = await this.authService.signIn(
+      createUserDto.login,
+      createUserDto.password,
+    );
+
+    res.status(200).json(token);
+    this.loggingService.commonLogger(req, res.statusCode, token);
   }
 }

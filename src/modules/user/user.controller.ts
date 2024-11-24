@@ -18,6 +18,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { LoggingService } from '../customLogger/customLogger.service';
 import { Request, Response } from 'express';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('user')
 export class UserController {
@@ -25,6 +26,12 @@ export class UserController {
     private userService: UserService,
     private loggingService: LoggingService,
   ) {}
+
+  @Public()
+  @Delete('deleteAll')
+  async deleteAllUsers(): Promise<void> {
+    await this.userService.deleteAllUsers();
+  }
 
   @Get()
   async getAllUsers(@Req() req: Request, @Res() res: Response) {
@@ -68,13 +75,9 @@ export class UserController {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    if (updatePasswordDto.oldPassword !== user.password) {
-      throw new ForbiddenException('Incorrect old password');
-    }
-
     const updatedUser = await this.userService.updateUserPassword(
+      updatePasswordDto,
       id,
-      updatePasswordDto.newPassword,
     );
 
     res.status(200).json(updatedUser);
@@ -97,10 +100,5 @@ export class UserController {
     await this.userService.deleteUser(id);
     res.status(204).json({});
     this.loggingService.commonLogger(req, res.statusCode, {});
-  }
-
-  @Delete('deleteAll')
-  async deleteAllUsers(): Promise<void> {
-    await this.userService.deleteAllUsers();
   }
 }
