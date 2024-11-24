@@ -24,6 +24,7 @@
     "docker:scan": "docker scout cves %npm_config_image%"
   },
   "dependencies": {
+    "@nestjs/cli": "^8.0.0",
     "@nestjs/common": "^9.4.3",
     "@nestjs/config": "^3.3.0",
     "@nestjs/core": "^9.4.3",
@@ -32,7 +33,7 @@
     "@nestjs/platform-express": "^9.4.3",
     "@nestjs/swagger": "^8.0.5",
     "@prisma/client": "^5.22.0",
-    "bcrypt": "^5.0.1",
+    "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "dotenv": "^16.0.1",
@@ -41,8 +42,7 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "uuid": "^8.3.2",
-    "yamljs": "^0.3.0",
-    "@nestjs/cli": "^8.0.0"
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@nestjs/schematics": "^8.0.0",

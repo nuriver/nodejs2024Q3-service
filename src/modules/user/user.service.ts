@@ -7,6 +7,10 @@ import { IUser } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../../prisma.service';
 import convertTimestamps from 'src/utilities/convertTimeStamps';
+import bcrypt from 'bcrypt';
+import hashPassword from 'src/utilities/hashPassword';
+
+const CRYPT_SALT = process.env.CRYPT_SALT;
 
 @Injectable()
 export class UserService {
@@ -35,6 +39,16 @@ export class UserService {
     return convertTimestamps(user);
   }
 
+  async getUserByLogin(login: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        login,
+      },
+    });
+
+    return user;
+  }
+
   async addUser(userDto: CreateUserDto): Promise<IUser> {
     const userWithSameLogin = await this.prisma.user.findUnique({
       where: {
@@ -48,22 +62,29 @@ export class UserService {
       );
     }
 
+    const hashedPassword = await hashPassword(userDto.password, +CRYPT_SALT);
+
     const newUser = await this.prisma.user.create({
-      data: userDto,
+      data: {
+        ...userDto,
+        password: hashedPassword,
+      },
     });
 
     const { password, ...userWithoutPassword } = newUser;
 
-    return convertTimestamps(userWithoutPassword);
+    return convertTimestamps(newUser);
   }
 
   async updateUserPassword(userId: string, newPassword: string) {
+    const hashPassword = await bcrypt.hash(newPassword, CRYPT_SALT);
+
     const updatedUser = await this.prisma.user.update({
       where: {
         id: userId,
       },
       data: {
-        password: newPassword,
+        password: hashPassword,
         version: {
           increment: 1,
         },
