@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { LoggingService } from '../customLogger/customLogger.service';
 import { Request, Response } from 'express';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -11,6 +12,7 @@ export class AuthController {
     private authService: AuthService,
   ) {}
 
+  @Public()
   @Post('login')
   async signIn(
     @Req() req: Request,
