@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+    image: nuriver/rest-api
+    container_name: rest-api_c  
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - ./src:/app/src
+      - /app/node_modules
+    command: npm run start:dev
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      - postgres 
+    networks:
+      - custom_network
+    entrypoint: /bin/sh -c "npx prisma generate && npx prisma migrate deploy && npm run start:dev"
+    restart: on-failure
+      
+  postgres:
+    build:
+      context: ./db
+    image: nuriver/custom-postgres
+    container_name: postgres_c
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER} 
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_logs:/var/log/postgresql 
+      - postgres_backups:/backups 
+      - postgres_conf:/etc/postgresql  
+    networks:
+      - custom_network 
+    restart: on-failure
+
+volumes:
+  postgres_data:
+    driver: local
+  postgres_logs:
+    driver: local
+  postgres_backups:
+    driver: local
+  postgres_conf:
+    driver: local
+
+networks:
+  custom_network:
+    driver: bridge
