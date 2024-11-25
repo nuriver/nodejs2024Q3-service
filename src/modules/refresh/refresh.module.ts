@@ -4,6 +4,6 @@ import { RefreshService } from './refresh.service';
 
 @Module({
   controllers: [RefreshController],
-  providers: [RefreshService]
+  providers: [RefreshService],
 })
 export class RefreshModule {}

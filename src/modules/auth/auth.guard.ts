@@ -41,15 +41,15 @@ export class AuthGuard implements CanActivate {
 
       try {
         const payload = await this.jwtService.verifyAsync(refreshToken, {
-          secret: process.env.JWT_REFRESH_SECRET_KEY,
+          secret: process.env.JWT_SECRET_REFRESH_KEY,
         });
 
         request['user'] = payload;
-      } catch {
+      } catch (error) {
         throw new ForbiddenException('Invalid refresh token');
       }
 
-      return true
+      return true;
     }
 
     const token = this.extractTokenFromHeader(request);

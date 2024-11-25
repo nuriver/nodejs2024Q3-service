@@ -30,10 +30,10 @@ export class AuthService {
     }
 
     try {
-      const payload = { sub: user.id, username: user.login };
+      const payload = { userId: user.id, login: user.login };
       const accessToken = await this.jwtService.signAsync(payload);
       const refreshToken = await this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_REFRESH_SECRET_KEY,
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
         expiresIn: process.env.REFRESH_EXPIRE,
       });
 
@@ -50,19 +50,22 @@ export class AuthService {
 
   async refresh(refreshTokenData: string) {
     const refreshPayload = await this.jwtService.verifyAsync(refreshTokenData, {
-      secret: process.env.JWT_REFRESH_SECRET_KEY,
+      secret: process.env.JWT_SECRET_REFRESH_KEY,
     });
 
-      const payload = { sub: refreshPayload.sub, username:refreshPayload.userName };
-      const accessToken = await this.jwtService.signAsync(payload);
-      const refreshToken = await this.jwtService.signAsync(payload, {
-        secret: process.env.JWT_REFRESH_SECRET_KEY,
-        expiresIn: process.env.REFRESH_EXPIRE,
-      });
+    const payload = {
+      userId: refreshPayload.userId,
+      login: refreshPayload.login,
+    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET_REFRESH_KEY,
+      expiresIn: process.env.REFRESH_EXPIRE,
+    });
 
     return {
       accessToken,
-      refreshToken
+      refreshToken,
     };
   }
 }
