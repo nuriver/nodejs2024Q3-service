@@ -29,14 +29,40 @@ export class AuthService {
       throw new ForbiddenException('Wrong password');
     }
 
-    const payload = { sub: user.id, username: user.login };
-    return {
-      accessToken: await this.jwtService.signAsync(payload),
-      user_id: user.id,
-    };
+    try {
+      const payload = { sub: user.id, username: user.login };
+      const accessToken = await this.jwtService.signAsync(payload);
+      const refreshToken = await this.jwtService.signAsync(payload, {
+        secret: process.env.JWT_REFRESH_SECRET_KEY,
+        expiresIn: process.env.REFRESH_EXPIRE,
+      });
+
+      return {
+        accessToken,
+        refreshToken,
+        userId: user.id,
+        login: user.login,
+      };
+    } catch (error) {
+      console.error('Error generating tokens:', error);
+    }
   }
 
-  async refresh() {
-    
+  async refresh(refreshTokenData: string) {
+    const refreshPayload = await this.jwtService.verifyAsync(refreshTokenData, {
+      secret: process.env.JWT_REFRESH_SECRET_KEY,
+    });
+
+      const payload = { sub: refreshPayload.sub, username:refreshPayload.userName };
+      const accessToken = await this.jwtService.signAsync(payload);
+      const refreshToken = await this.jwtService.signAsync(payload, {
+        secret: process.env.JWT_REFRESH_SECRET_KEY,
+        expiresIn: process.env.REFRESH_EXPIRE,
+      });
+
+    return {
+      accessToken,
+      refreshToken
+    };
   }
 }

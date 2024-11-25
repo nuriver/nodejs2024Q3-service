@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoggingService } from '../customLogger/customLogger.service';
 import { Request, Response } from 'express';
@@ -46,8 +46,20 @@ export class AuthController {
 
   @Refresh()
   @Post('refresh')
-  async refresh(@Res() res: Response, @Body() refreshToken?: string) {
-    const message = 'refresh endpoint';
-    res.status(200).json(refreshToken);
+  async refresh(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body?: { refreshToken: string },
+  ) {
+    const response = await this.authService.refresh(body.refreshToken);
+    res.status(200).json(response);
+    this.loggingService.commonLogger(req, res.statusCode, response);
+  }
+
+  @Public()
+  @Get('debug')
+  debug() {
+    console.log('JWT_REFRESH_SECRET_KEY:', process.env.JWT_REFRESH_SECRET_KEY);
+    console.log('REFRESH_TOKEN_EXPIRE_TIME:', process.env.REFRESH_EXPIRE);
   }
 }
