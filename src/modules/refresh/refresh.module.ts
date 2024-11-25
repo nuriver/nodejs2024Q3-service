@@ -1,9 +1,0 @@
-import { Module } from '@nestjs/common';
-import { RefreshController } from './refresh.controller';
-import { RefreshService } from './refresh.service';
-
-@Module({
-  controllers: [RefreshController],
-  providers: [RefreshService],
-})
-export class RefreshModule {}

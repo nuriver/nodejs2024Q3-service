@@ -38,12 +38,12 @@ async function bootstrap() {
   });
 
   const swaggerDocument = YAML.load('./doc/api.yaml');
-  SwaggerModule.setup('api', app, swaggerDocument);
+  SwaggerModule.setup('doc', app, swaggerDocument);
 
   await app.listen(PORT);
   console.log(`Server is running on http://localhost:${PORT}`);
   console.log(
-    `OpenApi documentation is available at http://localhost:${PORT}/api`,
+    `OpenApi documentation is available at http://localhost:${PORT}/doc`,
   );
 }
 bootstrap();

@@ -26,7 +26,7 @@ docker-compose up
 ```
 
 After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/api/.
+in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Docker vulnerabilities scanning 
@@ -51,6 +51,18 @@ To run only one of all test suites
 
 ```
 npm run test -- <path to suite>
+```
+
+To run all tests with authorization
+
+```
+npm run test:auth
+```
+
+To run all tests for refresh endpoint
+
+```
+npm run test:refresh
 ```
 
 ### Auto-fix and format

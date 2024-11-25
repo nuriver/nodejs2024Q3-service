@@ -8,7 +8,6 @@ import { ArtistModule } from './modules/artist/artist.module';
 import { AlbumModule } from './modules/album/album.module';
 import { FavsModule } from './modules/favs/favs.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { RefreshModule } from './modules/refresh/refresh.module';
 
 @Module({
   imports: [
@@ -19,7 +18,6 @@ import { RefreshModule } from './modules/refresh/refresh.module';
     AlbumModule,
     FavsModule,
     AuthModule,
-    RefreshModule,
   ],
   controllers: [AppController],
   providers: [AppService],

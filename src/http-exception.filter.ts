@@ -3,7 +3,6 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  InternalServerErrorException,
   Inject,
   HttpStatus,
 } from '@nestjs/common';

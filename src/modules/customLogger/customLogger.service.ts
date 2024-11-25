@@ -1,8 +1,9 @@
 import { LoggerService, Injectable } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Request } from 'express';
+
 @Injectable()
 export class LoggingService implements LoggerService {
-  log(message: any, ...optionalParams: any[]) {
+  log(message: any) {
     console.log(message);
   }
 
@@ -44,11 +45,7 @@ export class LoggingService implements LoggerService {
     console.error('------------------------');
   }
 
-  fatal(message: any, ...optionalParams: any[]) {}
-
-  warn(message: any, ...optionalParams: any[]) {}
-
-  debug?(message: any, ...optionalParams: any[]) {}
-
-  verbose?(message: any, ...optionalParams: any[]) {}
+  warn(message: any) {
+    console.log(message);
+  }
 }
