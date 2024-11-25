@@ -5,7 +5,7 @@ import { UserModule } from '../user/user.module';
 import { LoggerModule } from '../customLogger/customLogger.module';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth.gard';
+import { AuthGuard } from './auth.guard';
 
 @Module({
   controllers: [AuthController],
